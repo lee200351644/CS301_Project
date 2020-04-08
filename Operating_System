@@ -25,45 +25,177 @@ namespace OS2
             Console.Write("BB: ");
             var input = Console.ReadLine();
 
-
-            switch (input)
+            if(input == "help")
             {
-                case "help":
-                    {
-                        Console.WriteLine("Commmand list:");
-                        Console.WriteLine("shutdown - will power down computer");
-                        Console.WriteLine("clear    - clears the screen");
-                        Console.WriteLine("echo     - restates the line written after it");
-                        Console.WriteLine("color    - changed text color");
-                        Console.WriteLine("dir      - lists all files and directories");
-                        Console.WriteLine("cd       - goes to a directory");
-                        Console.WriteLine("print    - prints file contents");
-                        Console.WriteLine("write    - writes to a file");
-                        break;
-                    }
-
-                case "shutdown":
-                    {
-                        Cosmos.System.Power.Shutdown();
-                        break;
-                    }
-
-                case "clear":
-                    {
-                        for (int i = 0; i < 10; i++)
-                        {
-                            Console.WriteLine(" ");
-                        }
-                        break;
-                    }
-
-                default:
-                    {
-                        Console.WriteLine("invalid command");
-                        break;
-                    }
+                //list of options
+                Console.WriteLine("Commmand list:");
+                Console.WriteLine("shutdown - will power down computer");
+                Console.WriteLine("clear    - clears the screen");
+                Console.WriteLine("echo     - restates the line written after it");
+                Console.WriteLine("colour    - changed text color");
+                Console.WriteLine("dir      - lists all files and directories");
+                Console.WriteLine("cd       - goes to a directory");
+                Console.WriteLine("print    - prints file contents");
+                Console.WriteLine("write    - writes to a file");
             }
 
+            else if(input == "shutdown")
+            {
+                //shutdown command
+                Cosmos.System.Power.Shutdown();
+            }
+
+            else if(input == "clear")
+            {
+                //add line to push anything off the screen
+                for (int i = 0; i < 10; i++)
+                {
+                    Console.WriteLine(" ");
+                }
+            }
+
+            else if(input.StartsWith("echo "))
+            {
+                //this removes the echo and space and restates the statement
+                Console.WriteLine(input.Remove(0, 5));
+            }
+
+            else if(input.StartsWith("colour "))
+            {
+                var color = input.Remove(0, 7);  //removes colour 
+                color.ToLower();                 //lowercase the string
+                Console.WriteLine(color);
+                if (check_color(color) == true)
+                {
+                    Console.WriteLine("colour successfully changed");
+                }
+                else
+                {
+                    Console.WriteLine("failed to change color. \n possible colours: Black, DarkBlue, DarkGreen, DarkCyan, DarkRed, DarkMagenta, DarkYellow, Gray, DarkGrey, \n Blue, Green, Cyan, Red, Magenta, Yellow.");
+                }
+            }
+            else if(input == "dir")            //to be implemented once file are implemented
+            {
+                string[] dirs = GetDir(current_directory);
+                foreach (var item in dirs)
+                {
+                    Console.WriteLine(item);
+                }
+            }
+
+            else if (input == "cd")            //to be implemented once file are implemented
+            {
+            }
+
+            else if (input == "print")            //to be implemented once file are implemented
+            {
+            }
+            else if (input == "write")            //to be implemented once file are implemented
+            {
+            }
+
+            else
+            {
+                Console.WriteLine("invalid command");
+            }
+        }
+
+
+        private string GetDir(string adr)  //to be implemented
+        {
+            var dir = Directory.GetDirectories(adr);
+            return dir;
+        }
+
+        private bool check_color(string color)
+        {
+            switch (color)                  //Switch statement to find the colour chosen. returns false if there is an error
+            {
+                case "black":
+                    {
+                        Console.ForegroundColor = ConsoleColor.Black;
+                        return true;
+                    }
+                case "darkblue":
+                    {
+                        Console.ForegroundColor = ConsoleColor.DarkBlue;
+                        return true;
+                    }
+                case "darkgreen":
+                    {
+                        Console.ForegroundColor = ConsoleColor.DarkGreen;
+                        return true;
+                    }
+                case "darkcyan":
+                    {
+                        Console.ForegroundColor = ConsoleColor.DarkCyan;
+                        return true;
+                    }
+                case "darkred":
+                    {
+                        Console.ForegroundColor = ConsoleColor.DarkRed;
+                        return true;
+                    }
+                case "darkmagenta":
+                    {
+                        Console.ForegroundColor = ConsoleColor.DarkMagenta;
+                        return true;
+                    }
+                case "darkyellow":
+                    {
+                        Console.ForegroundColor = ConsoleColor.DarkYellow;
+                        return true;
+                    }
+                case "gray":
+                    {
+                        Console.ForegroundColor = ConsoleColor.Gray;
+                        return true;
+                    }
+                case "darkgrey":
+                    {
+                        Console.ForegroundColor = ConsoleColor.DarkGray;
+                        return true;
+                    }
+                case "blue":
+                    {
+                        Console.ForegroundColor = ConsoleColor.Blue;
+                        return true;
+                    }
+                case "green":
+                    {
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        return true;
+                    }
+                case "cyan":
+                    {
+                        Console.ForegroundColor = ConsoleColor.Cyan;
+                        return true;
+                    }
+                case "red":
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        return true;
+                    }
+                case "megenta":
+                    {
+                        Console.ForegroundColor = ConsoleColor.Magenta;
+                        return true;
+                    }
+                case "yellow":
+                    {
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        return true;
+                    }
+                case "white":
+                    {
+                        Console.ForegroundColor = ConsoleColor.White;
+                        return true;
+                    }
+                default:
+                    {
+                        return false;
+                    }
+            }
         }
     }
 }
