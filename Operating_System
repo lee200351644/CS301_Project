@@ -1,0 +1,69 @@
+//Create by David Lee 
+//student number: 200351644
+
+//made using visual studios and Cosmos and ran with VMware
+//testing is impossible without a virtual machine like VMware
+//for VMware to find the OS it must be in its natural position for Visual Studios
+
+
+using System;
+using System.Collections.Generic;
+using System.Text;
+using Sys = Cosmos.System;
+
+namespace OS2
+{
+    public class Kernel : Sys.Kernel
+    {
+        protected override void BeforeRun()
+        {
+            Console.WriteLine("Boot Sucessful, Welcome to Booker OS. \n For help please type help.");
+        }
+
+        protected override void Run()
+        {
+            Console.Write("BB: ");
+            var input = Console.ReadLine();
+
+
+            switch (input)
+            {
+                case "help":
+                    {
+                        Console.WriteLine("Commmand list:");
+                        Console.WriteLine("shutdown - will power down computer");
+                        Console.WriteLine("clear    - clears the screen");
+                        Console.WriteLine("echo     - restates the line written after it");
+                        Console.WriteLine("color    - changed text color");
+                        Console.WriteLine("dir      - lists all files and directories");
+                        Console.WriteLine("cd       - goes to a directory");
+                        Console.WriteLine("print    - prints file contents");
+                        Console.WriteLine("write    - writes to a file");
+                        break;
+                    }
+
+                case "shutdown":
+                    {
+                        Cosmos.System.Power.Shutdown();
+                        break;
+                    }
+
+                case "clear":
+                    {
+                        for (int i = 0; i < 10; i++)
+                        {
+                            Console.WriteLine(" ");
+                        }
+                        break;
+                    }
+
+                default:
+                    {
+                        Console.WriteLine("invalid command");
+                        break;
+                    }
+            }
+
+        }
+    }
+}
