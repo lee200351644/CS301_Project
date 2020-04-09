@@ -7,9 +7,9 @@
 
 
 //this OS is designed to do simple tasks that all OS can do
-// 1. Check time                                 (inprogress)
+// 1. Check time                                 (complete)
 // 2. Write,save,open, and delete text docs      (inprogress)
-// 3. Calculate simple mathematics  ie 10/5      (fixing bugs)
+// 3. Calculate simple mathematics  ie 10/5      (complete)
 // 4. Change desktop background                  (inprogress)
 // 5. explore operating system                   (inprogress)
 // 6. shutdown OS                                (complete)
@@ -17,7 +17,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.IO;                 //added to allow for a file system
+using System.IO;                            //added to allow for a file system
 using Sys = Cosmos.System;
 
 namespace OS2
@@ -40,7 +40,7 @@ namespace OS2
             Console.Write(current_directory + "> ");                                                  //shows new console line
             var input = Console.ReadLine().ToLower();
 
-            if(input == "help")                                                                       //lists all possible options
+            if (input == "help")                                                                       //lists all possible options
             {
                 //list of options
                 Console.WriteLine("Commmand list:");
@@ -54,39 +54,47 @@ namespace OS2
                 Console.WriteLine("help     - lists all possible commands");
                 Console.WriteLine("print    - prints file contents");
                 Console.WriteLine("shutdown - will power down computer");
+                Console.WriteLine("time     - shows current time");
                 Console.WriteLine("write    - writes to a file");
             }
 
-            else if(input == "cal")
+            else if (input == "time")
+            {
+                string v = string.Format("{0:HH:mm:ss tt}", DateTime.Now);
+                string time = v;
+                Console.WriteLine("The current time is {0}", time);
+            }
+
+            else if (input == "cal")
             {
                 calCommand();
             }
 
-            else if(input == "about")
+            else if (input == "about")
             {
-                Console.WriteLine("Booker OS Version 0.4");
+                Console.WriteLine("Booker OS Version 0.5");
                 Console.WriteLine("Created in C# with the use of Visual studios 2019 and Cosmos");
             }
 
-            else if(input == "shutdown")
+            else if (input == "shutdown")
             {
                 //shutdown command
                 Cosmos.System.Power.Shutdown();
             }
 
-            else if(input == "clear")
+            else if (input == "clear")
             {
                 //add line to push anything off the screen
                 Console.Clear();
             }
 
-            else if(input.StartsWith("echo "))
+            else if (input.StartsWith("echo "))
             {
                 //this removes the echo and space and restates the statement
                 Console.WriteLine(input.Remove(0, 5));
             }
 
-            else if(input.StartsWith("colour "))
+            else if (input.StartsWith("colour "))
             {
                 var color = input.Remove(0, 7);  //removes colour 
                 if (check_color(color) == true)
@@ -98,7 +106,8 @@ namespace OS2
                     Console.WriteLine("failed to change color. \n possible colours: Black, DarkBlue, DarkGreen, DarkCyan, DarkRed, \n DarkMagenta, DarkYellow, Gray, DarkGrey, Blue, \n Green, Cyan, Red, Magenta, Yellow.");
                 }
             }
-            else if(input == "dir")            //to be implemented once file are implemented
+
+            else if (input == "dir")            //to be implemented once file are implemented
             {
                 string[] dirs = GetDir(current_directory);
                 foreach (var item in dirs)
@@ -127,37 +136,70 @@ namespace OS2
 
         private void calCommand() //simple calculator
         {
-            Console.WriteLine("please enter an expression in the form:5 + 9");      //error that crashed system occurs when not in the right syntax
-            var input = Console.ReadLine().ToLower();                               //possible fix
-            string[] lex = input.Split(' ');
             int result;
-            int val1 = int.Parse(lex[0]);
-            int val2 = int.Parse(lex[2]);
+            Console.WriteLine("please enter an integer");      //done in this manner as parse and split would crash the system
+            var in1 = Console.ReadLine().ToLower();          // if not all values where filled as such this is a simple solution
+            if (in1 == null || in1 == "")
+            {
+                Console.WriteLine("ERROR: no values entered");
+                return;
+            }
 
-            if (lex[1] == "+")                //can only do simple calculations
+            Console.WriteLine("please enter a valid operator");
+            var op = Console.ReadLine().ToLower();
+            if (op == null || op == "")
             {
-                result = val1 + val2;
-                Console.WriteLine("Result = " + result); //result writeline here as otherwise an error occurs
+                Console.WriteLine("ERROR: no values entered");
+                return;
             }
-            else if(lex[1] == "-")
+
+            Console.WriteLine("please enter an integer");
+            var in2 = Console.ReadLine().ToLower();
+            if (in2 == null || in2 == "")
             {
-                result = val1 - val2;
-                Console.WriteLine("Result = " + result);
+                Console.WriteLine("ERROR: no values entered");
+                return;
             }
-            else if (lex[1] == "*")
+
+            int val1;
+            int val2;
+
+
+            if (int.TryParse(in1, out val1))
             {
-                result = val1 * val2;
-                Console.WriteLine("Result = " + result);
+                if (!int.TryParse(in2, out val2))
+                {
+                    Console.WriteLine("ERROR: nonvalid integer");
+                    return;
+                }
+
+                if (op == "+")                //can only do simple calculations
+                {
+                    result = val1 + val2;
+                    Console.WriteLine("Result = " + result); //result writeline here as otherwise an error occurs
+                }
+                else if (op == "-")
+                {
+                    result = val1 - val2;
+                    Console.WriteLine("Result = " + result);
+                }
+                else if (op == "*")
+                {
+                    result = val1 * val2;
+                    Console.WriteLine("Result = " + result);
+                }
+                else if (op == "/")
+                {
+                    result = val1 / val2;
+                    Console.WriteLine("Result = " + result);
+                }
+                else
+                {
+                    Console.WriteLine("invalid operator");   //final catcher if somthing goes awry
+                }
+                return;
             }
-            else if (lex[1] == "/")
-            {
-                result = val1 / val2;
-                Console.WriteLine("Result = " + result);
-            }
-            else
-            {
-                Console.WriteLine("invalid command a space must be inbetween each value X / Y");
-            }
+            Console.WriteLine("ERROR: nonvalid integer");
             return;
         }
 
