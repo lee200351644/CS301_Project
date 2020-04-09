@@ -1,6 +1,6 @@
-//Create by David Lee 
+//Create by David Lee
 //student number: 200351644
-
+//Version 0.6
 //made using visual studios and Cosmos and ran with VMware
 //testing is impossible without a virtual machine like VMware
 //for VMware to find the OS it must be in its natural position for Visual Studios
@@ -26,7 +26,7 @@ namespace OS2
     {
 
         Sys.FileSystem.CosmosVFS fs;
-        string current_directory = "0:\\"; //double \ to allow it to be written in a string
+        string current_directory = @"0:\"; //double \ to allow it to be written in a string
 
         protected override void BeforeRun()
         {
@@ -46,22 +46,27 @@ namespace OS2
                 Console.WriteLine("Commmand list:");
                 Console.WriteLine("about    - information about OS");
                 Console.WriteLine("cal      - calculates simple mathematics");
-                Console.WriteLine("cd       - goes to a directory  [cd will return to root while cd .. will go up one to parent directory]");
+                Console.WriteLine("cd       - goes to a directory");
                 Console.WriteLine("clear    - clears the screen");
-                Console.WriteLine("colour    - changed text color to what is specified after words (limited)");
+                Console.WriteLine("colour   - changed text color to what is specified after words (limited)");
                 Console.WriteLine("dir      - lists all files and directories");
+                Console.WriteLine("rmdir    - Delete an empty directory");
                 Console.WriteLine("echo     - restates the line written after it");
                 Console.WriteLine("help     - lists all possible commands");
+                Console.WriteLine("mkdir    - create directory");
                 Console.WriteLine("print    - prints file contents");
                 Console.WriteLine("shutdown - will power down computer");
                 Console.WriteLine("time     - shows current time");
-                Console.WriteLine("write    - writes to a file");
+                Console.WriteLine("wr       - writes to/creates a file (wr name.txt)");
             }
+
+
+            //----------------------------------simple commands-------------------------------------------------------------------||
 
             else if (input == "time")
             {
-                string v = string.Format("{0:HH:mm:ss tt}", DateTime.Now);
-                string time = v;
+                string v = string.Format("{0:HH:mm:ss tt}", DateTime.Now);    //gives format of how time will be shown
+                string time = v;                                              //an Exception is made if this is not here
                 Console.WriteLine("The current time is {0}", time);
             }
 
@@ -96,7 +101,7 @@ namespace OS2
 
             else if (input.StartsWith("colour "))
             {
-                var color = input.Remove(0, 7);  //removes colour 
+                var color = input.Remove(0, 7);  //removes colour and space
                 if (check_color(color) == true)
                 {
                     Console.WriteLine("colour successfully changed");
@@ -107,6 +112,8 @@ namespace OS2
                 }
             }
 
+            //----------------------------------Directory related commands--------------------------------------------------||
+
             else if (input == "dir")            //to be implemented once file are implemented
             {
                 string[] dirs = GetDir(current_directory);
@@ -116,24 +123,56 @@ namespace OS2
                 }
             }
 
-            //else if (input == "cd")            //to be implemented once file are implemented
+            else if(input.StartsWith("mkdir "))
+            {
+                input = input.Remove(0, 6);
+                if (current_directory == @"0:\")
+                {
+                    input = current_directory + input;
+                }
+                else
+                {
+                    input = current_directory + @"\" + input;
+                }
+                createDir(input);
+            }
+
+            else if (input.StartsWith("rmdir "))
+            {
+                input = input.Remove(0, 6);
+                if (current_directory == @"0:\")
+                {
+                    input = current_directory + input;
+                }
+                else
+                {
+                    input = current_directory + @"\" + input;
+                }
+                deleteDir(input);
+            }
+
+            //else if(input.StartsWith("cr "))
             //{
-            //    
+            //    input = input.Remove(0, 3);           //remove command
+            //    input = current_directory + input;    //create path to file
+            //    create(input);
             //}
 
-            //else if (input == "print")            //to be implemented once file are implemented
-            //{
-            //}
-            //else if (input == "write")            //to be implemented once file are implemented
-            //{
-            //}
-
-            else
+            else                              //catch all if no valid command is given
             {
                 Console.WriteLine("invalid command");
             }
         }
 
+
+
+
+
+
+
+        //Protection levels in C# prevent me from trnasfering these to a new file
+        //Functionality comes first then I will attempt to clean this up once everything is working
+        //-------------------------------------------Cal command-------------------------------------------------------------------
         private void calCommand() //simple calculator
         {
             int result;
@@ -145,7 +184,7 @@ namespace OS2
                 return;
             }
 
-            Console.WriteLine("please enter a valid operator");
+            Console.WriteLine("please enter a valid operator");  //grabs operator
             var op = Console.ReadLine().ToLower();
             if (op == null || op == "")
             {
@@ -153,7 +192,7 @@ namespace OS2
                 return;
             }
 
-            Console.WriteLine("please enter an integer");
+            Console.WriteLine("please enter an integer");       //second int
             var in2 = Console.ReadLine().ToLower();
             if (in2 == null || in2 == "")
             {
@@ -165,7 +204,7 @@ namespace OS2
             int val2;
 
 
-            if (int.TryParse(in1, out val1))
+            if (int.TryParse(in1, out val1))                   //tries to parse in1 into an integer if it fails than gives an error
             {
                 if (!int.TryParse(in2, out val2))
                 {
@@ -202,20 +241,59 @@ namespace OS2
             Console.WriteLine("ERROR: nonvalid integer");
             return;
         }
+        //----------------------------------------------------------------------------------------------------------
 
 
-        //private bool cd_checker(string adr)   //
-        //{
-        //    if(DirectoryInfo.M)
-        //    return false;
-        //}
-
+        //--------------------------------------------Dir Command---------------------------------------------------
         private string[] GetDir(string adr)  //dir command function
         {
             var dir = Directory.GetDirectories(adr);
             return dir;
         }
+        //------------------------------------------mkdir command------------------------------------------------
 
+        private void createDir(string adr)
+        {
+            try
+            {
+                //check if file exits
+                if (Directory.Exists(adr))
+                {
+                    Console.WriteLine("Directory already exits");
+                    return;
+                }
+
+                DirectoryInfo path = Directory.CreateDirectory(adr);
+                Console.WriteLine("Directory {0} successfully created");
+            }
+            //error message
+            catch (Exception e)
+            {
+                Console.WriteLine("Failed to create Directory: {0}", e.ToString());
+            }
+            finally { };
+        }
+        //---------------------------------rmdir command-----------------------------------------------------------
+        private void deleteDir(string adr)
+        {
+            try
+            {
+                if(!Directory.Exists(adr))
+                {
+                    Console.WriteLine("Directory does not exist");
+                    return;
+                }
+                Directory.Delete(adr, true); //delete an empty directory
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine("Failed to delete: {0}", e.ToString());
+            }
+            finally { };
+        }
+
+
+        //-----------------------------------------Colour command--------------------------------------------------
         private bool check_color(string color)           //colour command function
         {
             switch (color)                  //Switch statement to find the colour chosen. returns false if there is an error
@@ -306,5 +384,7 @@ namespace OS2
                     }
             }
         }
+        //-------------------------------------------------------------------------------------
+
     }
 }
