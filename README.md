@@ -10,10 +10,9 @@ this being
 
 1. Check time                              
 2. Write,save,open, and delete text docs    
-3. Calculate simple mathematics  ie 10/5     
-4. Change desktop background                  
-5. explore operating system               
-6. shutdown OS                       
+3. Calculate simple mathematics  ie 10/5                    
+4. explore operating system               
+5. shutdown OS                       
 
 challenges:
 I have never programmed in C# so I am learning as I go
