@@ -1,6 +1,6 @@
-//Create by David Lee
+//Create by David Lee 
 //student number: 200351644
-//Version 0.6
+
 //made using visual studios and Cosmos and ran with VMware
 //testing is impossible without a virtual machine like VMware
 //for VMware to find the OS it must be in its natural position for Visual Studios
@@ -10,9 +10,8 @@
 // 1. Check time                                 (complete)
 // 2. Write,save,open, and delete text docs      (inprogress)
 // 3. Calculate simple mathematics  ie 10/5      (complete)
-// 4. Change desktop background                  (inprogress)
-// 5. explore operating system                   (inprogress)
-// 6. shutdown OS                                (complete)
+// 4. explore operating system                   (complete)
+// 5. shutdown OS                                (complete)
 
 using System;
 using System.Collections.Generic;
@@ -46,7 +45,7 @@ namespace OS2
                 Console.WriteLine("Commmand list:");
                 Console.WriteLine("about    - information about OS");
                 Console.WriteLine("cal      - calculates simple mathematics");
-                Console.WriteLine("cd       - goes to a directory");
+                Console.WriteLine("cd       - goes to a directory [.. to parent / rt to root directory ]");
                 Console.WriteLine("clear    - clears the screen");
                 Console.WriteLine("colour   - changed text color to what is specified after words (limited)");
                 Console.WriteLine("dir      - lists all files and directories");
@@ -102,7 +101,7 @@ namespace OS2
             else if (input.StartsWith("colour "))
             {
                 var color = input.Remove(0, 7);  //removes colour and space
-                if (check_color(color) == true)
+                if (Check_color(color) == true)
                 {
                     Console.WriteLine("colour successfully changed");
                 }
@@ -134,7 +133,7 @@ namespace OS2
                 {
                     input = current_directory + @"\" + input;
                 }
-                createDir(input);
+                CreateDir(input);
             }
 
             else if (input.StartsWith("rmdir "))
@@ -148,15 +147,31 @@ namespace OS2
                 {
                     input = current_directory + @"\" + input;
                 }
-                deleteDir(input);
+                DeleteDir(input);
             }
 
-            //else if(input.StartsWith("cr "))
-            //{
-            //    input = input.Remove(0, 3);           //remove command
-            //    input = current_directory + input;    //create path to file
-            //    create(input);
-            //}
+            else if(input.StartsWith("cd "))
+            {
+                input = input.Remove(0, 3);                                           //setup code to prepare input for movement
+                if (current_directory == @"0:\")
+                {
+                    input = current_directory + input;
+                }
+                else if(input == ".." && current_directory != @"0:\")
+                {
+                    DirectoryInfo info = Directory.GetParent(current_directory);
+                    input = info.ToString();
+                }
+                else if(input == "" || input == null || input == "rt")                //catch all on the off chance a space is used with no input
+                {
+                     input  = Directory.GetDirectoryRoot(current_directory);
+                }
+                else
+                {
+                    input = current_directory + @"\" + input;
+                }
+                MvDir(input);                                                        //moves to simple function to move to the new directory
+            }
 
             else                              //catch all if no valid command is given
             {
@@ -252,7 +267,7 @@ namespace OS2
         }
         //------------------------------------------mkdir command------------------------------------------------
 
-        private void createDir(string adr)
+        private void CreateDir(string adr)
         {
             try
             {
@@ -274,7 +289,7 @@ namespace OS2
             finally { };
         }
         //---------------------------------rmdir command-----------------------------------------------------------
-        private void deleteDir(string adr)
+        private void DeleteDir(string adr)
         {
             try
             {
@@ -291,10 +306,24 @@ namespace OS2
             }
             finally { };
         }
+        //---------------------------------cd command--------------------------------------------------------------
+        private void MvDir(string adr)
+        {
+            try
+            {
+                Directory.SetCurrentDirectory(adr);
+                current_directory = adr;
+            }
+            catch (DirectoryNotFoundException e)
+            {
+                Console.WriteLine("directory does not exist. {0}", e);
+            }
+            finally { }
+        }
 
 
         //-----------------------------------------Colour command--------------------------------------------------
-        private bool check_color(string color)           //colour command function
+        private bool Check_color(string color)           //colour command function
         {
             switch (color)                  //Switch statement to find the colour chosen. returns false if there is an error
             {
